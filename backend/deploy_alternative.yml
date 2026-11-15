@@ -1,0 +1,113 @@
+# Alternative deployment strategy for large packages
+# Use this if the main pipeline continues to fail
+
+trigger: none  # Manual trigger only
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  - group: SWRO-Backend-Variables
+  - name: webAppName
+    value: "mpc-swro-be"
+  - name: azureServiceConnectionId
+    value: "MPC-DEV-SWRO-Serviceconnector"
+
+stages:
+- stage: DeployWithoutJava
+  displayName: 'Deploy without bundled Java'
+  jobs:
+  - deployment: DeployToAzure
+    displayName: 'Deploy to Azure App Service (No Java Bundle)'
+    environment: 'production'
+    pool:
+      vmImage: 'ubuntu-latest'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - checkout: self
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: '3.11'
+            displayName: 'Use Python 3.11'
+
+          - script: |
+              python -m pip install --upgrade pip
+              pip install -r requirements.txt
+            displayName: 'Install Python Dependencies'
+
+          - script: |
+              python manage.py collectstatic --noinput
+            displayName: 'Collect Static Files'
+            env:
+              DJANGO_SETTINGS_MODULE: nomac.settings
+              SECRET_KEY: $(SECRET_KEY)
+              DEBUG: False
+
+          - task: ArchiveFiles@2
+            displayName: 'Archive app for deployment'
+            inputs:
+              rootFolderOrFile: '.'
+              includeRootFolder: false
+              archiveType: zip
+              archiveFile: $(Build.ArtifactStagingDirectory)/app.zip
+              replaceExistingArchive: true
+
+          - task: AzureWebApp@1
+            displayName: 'Deploy to Azure App Service'
+            inputs:
+              azureSubscription: '$(azureServiceConnectionId)'
+              appType: 'webAppLinux'
+              appName: '$(webAppName)'
+              package: '$(Build.ArtifactStagingDirectory)/app.zip'
+              runtimeStack: 'PYTHON|3.11'
+              startUpCommand: 'gunicorn nomac.wsgi:application --bind=0.0.0.0:8000 --workers=1 --threads=4 --worker-class=gthread --timeout=120 --access-logfile=- --error-logfile=-'
+              deploymentMethod: 'zipDeploy'
+              appSettings: |
+                DJANGO_SETTINGS_MODULE=nomac.settings
+                WEBSITES_PORT=8000
+                SCM_DO_BUILD_DURING_DEPLOYMENT=true
+                ENABLE_ORYX_BUILD=true
+                DISABLE_COLLECTSTATIC=false
+                ORYX_DISABLE_TELEMETRY=true
+                POST_BUILD_COMMAND=python manage.py collectstatic --noinput
+                PYTHONDONTWRITEBYTECODE=1
+                PYTHONPATH=/home/site/wwwroot
+                WEBSITE_RUN_FROM_PACKAGE=1
+                # Java for Spark (using system Java)
+                JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+                PATH=/usr/lib/jvm/java-17-openjdk-amd64/bin:/opt/python/3.11.13/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+                SPARK_LOCAL_DIRS=/tmp/spark
+                PYSPARK_PYTHON=python
+                # Environment variables
+                SECRET_KEY=$(SECRET_KEY)
+                AZURE_TENANT_ID=$(AZURE_TENANT_ID)
+                AZURE_CLIENT_ID=$(AZURE_CLIENT_ID)
+                AZURE_CLIENT_SECRET=$(AZURE_CLIENT_SECRET)
+                JWT_SECRET=$(JWT_SECRET)
+                DELTALAKE_USERS_TABLE_PATH=$(DELTALAKE_USERS_TABLE_PATH)
+                DEBUG=$(DEBUG)
+                ALLOWED_HOSTS=$(ALLOWED_HOSTS)
+                SERVER_HOSTNAME=$(SERVER_HOSTNAME)
+                HTTP_PATH=$(HTTP_PATH)
+                ACCESS_TOKEN=$(ACCESS_TOKEN)
+                AZURE_STORAGE_ACCOUNT=$(AZURE_STORAGE_ACCOUNT)
+                AZURE_STORAGE_KEY=$(AZURE_STORAGE_KEY)
+                # ClickHouse Configuration
+                CLICKHOUSE_HOST=$(CLICKHOUSE_HOST)
+                CLICKHOUSE_PORT=$(CLICKHOUSE_PORT)
+                CLICKHOUSE_USERNAME=$(CLICKHOUSE_USERNAME)
+                CLICKHOUSE_PASSWORD=$(CLICKHOUSE_PASSWORD)
+                CLICKHOUSE_DATABASE=$(CLICKHOUSE_DATABASE)
+                CLICKHOUSE_CONNECT_TIMEOUT=$(CLICKHOUSE_CONNECT_TIMEOUT)
+                CLICKHOUSE_SEND_RECEIVE_TIMEOUT=$(CLICKHOUSE_SEND_RECEIVE_TIMEOUT)
+                # Redis Configuration
+                REDIS_HOST=$(REDIS_HOST)
+                REDIS_PORT=$(REDIS_PORT)
+                REDIS_PASSWORD=$(REDIS_PASSWORD)
+                REDIS_DB=$(REDIS_DB)
+                REDIS_MAX_CONNECTIONS=$(REDIS_MAX_CONNECTIONS)
+                REDIS_IDLE_TIMEOUT=$(REDIS_IDLE_TIMEOUT)
+                # Azure Storage Container for ClickHouse
+                AZURE_STORAGE_CONTAINER=$(AZURE_STORAGE_CONTAINER)

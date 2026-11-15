@@ -1,0 +1,206 @@
+/* Alert Overview Table Styles */
+
+.container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.spinnerOverlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.7);
+}
+
+:global(.dark) .spinnerOverlay {
+  background-color: rgba(20, 20, 20, 0.9);
+}
+.errorContainer {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+.errorText {
+  font-size: 12px;
+  color: #ef4444;
+}
+
+.contentContainer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.tableWrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  min-height: 0;
+  max-height: 100%;
+}
+
+.header {
+  padding: 10px 14px;
+  background: linear-gradient(to right, #f0f9ff, #e0f2fe);
+  border-bottom: 2px solid #bae6fd;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  border-radius: 12px 12px 0 0;
+}
+
+.headerIndicator {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.indicatorBar {
+  width: 8px;
+  height: 24px;
+  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+  border-radius: 3px;
+  box-shadow: 0 2px 4px rgba(14, 165, 233, 0.3);
+}
+
+.title {
+  font-weight: 700;
+  color: #0c4a6e;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  font-family:
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+}
+
+.timeBadge {
+  font-weight: 600;
+  color: #0284c7;
+  background: rgba(59, 130, 246, 0.1);
+  padding: 3px 10px;
+  border-radius: 4px;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  font-family:
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+}
+
+.tableContainer {
+  flex: 1;
+  overflow: auto;
+  min-height: 0;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.tableContainer::-webkit-scrollbar {
+  display: none;
+}
+
+.emptyContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100px;
+  width: 100%;
+}
+
+.emptyText {
+  font-size: 11px;
+}
+
+.pagination {
+  padding: 8px 12px;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f0f0f0;
+  min-height: 40px;
+  border-radius: 0 0 12px 12px;
+}
+
+:global(.dark) .header {
+  background: #262626;
+  border-bottom: 2px solid #1d4ed8;
+}
+
+:global(.dark) .pagination {
+  border-top: 1px solid #1f2937;
+  background: #141414;
+}
+
+.paginationText {
+  color: #666;
+  font-family:
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+  font-weight: 400;
+}
+
+.paginationButton {
+  font-family:
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+  height: 24px;
+}
+
+/* Responsive: Reduce spacing and font sizes at 900px and below */
+@media (max-height: 900px) {
+  .header {
+    padding: 6px 10px;
+  }
+
+  .indicatorBar {
+    height: 16px;
+    width: 5px;
+  }
+
+  .title {
+    font-size: var(--font-size-lg);
+  }
+
+  .timeBadge {
+    padding: 2px 8px;
+    font-size: 11px;
+  }
+
+  .pagination {
+    padding: 6px 10px;
+    min-height: 36px;
+  }
+
+  .paginationButton {
+    height: 22px;
+  }
+}

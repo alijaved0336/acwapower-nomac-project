@@ -1,0 +1,203 @@
+/* Status Bar Component Styles */
+
+.statusBar {
+  height: 56px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border-bottom: 3px solid #3b82f6;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  position: relative;
+  z-index: 100;
+}
+
+.leftSection {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.siteNameContainer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+
+.siteIcon {
+  color: white;
+  font-size: 18px;
+}
+
+.siteName {
+  color: white;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.tabsContainer {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tabButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tabButtonActive {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+  font-weight: 700;
+  border: none;
+  box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
+}
+
+.tabButtonInactive {
+  background: #f8fafc;
+  color: #64748b;
+  font-weight: 600;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.tabButtonInactive:hover {
+  background: #e2e8f0;
+  transform: translateY(-1px);
+}
+
+.tabIcon {
+  font-size: 13px;
+}
+
+.dateContainer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  background: #f1f5f9;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+}
+
+.dateIcon {
+  color: #3b82f6;
+  font-size: 16px;
+}
+
+.dateText {
+  color: #1e293b;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.rightSection {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.filterTag {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 6px;
+}
+
+.filterTagStream {
+  background: #dbeafe;
+  border: 1px solid #3b82f6;
+  color: #1e40af;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+}
+
+.filterTagRacks {
+  background: #fef3c7;
+  border: 1px solid #f59e0b;
+  color: #92400e;
+  box-shadow: 0 2px 4px rgba(245, 158, 11, 0.2);
+}
+
+.filterIcon {
+  font-size: 11px;
+  margin-right: 6px;
+}
+
+:global(.dark) .statusBar {
+  background: #141414;
+  border-bottom-color: #1d4ed8;
+  box-shadow: 0 10px 30px rgba(2, 6, 23, 0.8);
+}
+
+:global(.dark) .tabButtonInactive {
+  background: #1f2937;
+  color: #e2e8f0;
+  border-color: #334155;
+}
+
+:global(.dark) .dateContainer {
+  background: #111827;
+  border-color: #1f2937;
+}
+
+:global(.dark) .dateText {
+  color: #e2e8f0;
+}
+
+:global(.dark) .filterTagStream {
+  background: rgba(59, 130, 246, 0.15);
+  color: #bfdbfe;
+  border-color: #3b82f6;
+}
+
+:global(.dark) .filterTagRacks {
+  background: rgba(245, 158, 11, 0.2);
+  color: #fde68a;
+  border-color: #f59e0b;
+}
+
+/* Responsive: Reduce spacing at 900px and below */
+@media (max-height: 900px) {
+  .statusBar {
+    height: 44px;
+    padding: 0 20px;
+  }
+
+  .siteNameContainer {
+    padding: 6px 12px;
+  }
+
+  .siteName {
+    font-size: 13px;
+  }
+
+  .dateText {
+    font-size: 12px;
+  }
+
+  .tabButton {
+    padding: 5px 12px;
+  }
+
+  .dateContainer {
+    padding: 6px 12px;
+  }
+}
+

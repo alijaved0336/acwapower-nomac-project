@@ -1,0 +1,132 @@
+/* Racks In Operation Layout Styles */
+
+/* Main container */
+.mainContainer {
+  height: 100vh;
+  overflow: hidden;
+  /* background: linear-gradient(135deg, #f5f7fa 0%, #e8eef5 100%); */
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  gap: 4px;
+}
+
+/* Content container for tabs */
+.contentContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  overflow: hidden;
+  padding: 12px;
+  box-sizing: border-box;
+}
+
+/* All Tab - Row 1: Bar Chart + Running Table side by side */
+.allTabRow1 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  flex: 0 0 40%;
+  overflow: hidden;
+}
+
+/* All Tab - Row 2: CIP Resume Table full width */
+.allTabRow2 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  flex: 0 0 60%;
+  overflow: hidden;
+}
+
+/* Racks Tab - Row 1: Bar Chart (50%) */
+.racksTabRow1 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  flex: 0 0 50%;
+  overflow: hidden;
+}
+
+/* Racks Tab - Row 2: Running Table (50%) */
+.racksTabRow2 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  flex: 0 0 50%;
+  overflow: hidden;
+}
+
+/* CIP Tab - Single container full width */
+.cipTabContainer {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Loading container */
+.loadingContainer {
+  display: flex;
+  height: 100vh;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Responsive: Reduce spacing and adjust proportions at 900px and below */
+@media (max-height: 900px) {
+  .contentContainer {
+    padding: 6px;
+    gap: 4px;
+  }
+
+  .allTabRow1 {
+    flex: 0 0 40%;
+    gap: 4px;
+  }
+
+  .allTabRow2 {
+    flex: 0 0 60%;
+    gap: 4px;
+  }
+
+  .racksTabRow1 {
+    flex: 0 0 48%;
+    gap: 4px;
+  }
+
+  .racksTabRow2 {
+    flex: 0 0 52%;
+    gap: 4px;
+  }
+
+  .cipTabContainer {
+    gap: 4px;
+  }
+}
+
+/* ---- MultiSelect Chip Wrapping Fix (local to this layout) ---- */
+
+/* Force the tags to wrap inside */
+/* .mainContainer :global(.ant-select-multiple .ant-select-selector) {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  padding: 4px 8px !important;
+  min-height: 40px !important;
+  height: auto !important;
+  align-items: center;
+  overflow: hidden !important;
+}
+
+
+.mainContainer :global(.ant-select-selection-overflow) {
+  flex-wrap: wrap !important;
+  max-width: 100% !important;
+}
+
+.mainContainer :global(.ant-select-selection-item) {
+  max-width: 100% !important;
+  margin-bottom: 4px;
+} */

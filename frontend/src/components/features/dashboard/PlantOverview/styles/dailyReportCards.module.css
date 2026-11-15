@@ -1,0 +1,366 @@
+/* Daily Report Cards Component Styles */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 0;
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.innerContainer {
+  border-radius: 16px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border-color: var(--Border-neutral-Border-Light, #f0f0f0);
+  border-width: 1px;
+  border-style: solid;
+  min-height: 0;
+  overflow: hidden;
+  gap: 6px;
+}
+
+.header {
+  padding: 8px 12px;
+  background: linear-gradient(to right, #f5f3ff, #ede9fe);
+  border-bottom: 2px solid #c4b5fd;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  flex-shrink: 0;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.headerIndicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.indicatorBar {
+  width: 6px;
+  height: 20px;
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  border-radius: 3px;
+  box-shadow: 0 2px 4px rgba(139, 92, 246, 0.3);
+}
+
+.headerTitle {
+  font-weight: 700;
+  background: linear-gradient(135deg, #4c1d95 0%, #5b21b6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: 0.5px;
+  font-family:
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.headerTitleCompact {
+  font-size: var(--font-size-lg);
+}
+
+.headerTitleNormal {
+  font-size: calc(var(--font-size-lg) * 1.2);
+}
+
+.cardsGrid {
+  display: grid;
+  gap: 12px;
+  padding: 4px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  flex: 1;
+  overflow: auto;
+  align-content: start;
+  justify-content: center;
+}
+
+.cardsGridCompact {
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+
+.cardsGridNormal {
+  grid-template-columns: 1fr 1fr;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(4, 1fr);
+}
+
+.card {
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  height: fit-content;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 6px !important;
+}
+
+.cardHeader {
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f3f4f6;
+  width: 100%;
+  min-width: 0;
+}
+
+.cardHeaderDate {
+  font-weight: 700;
+  color: #8b5cf6;
+  font-family:
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cardHeaderDateCompact {
+  font-size: var(--font-size-md);
+}
+
+.cardHeaderDateNormal {
+  font-size: calc(var(--font-size-md) * 1.2);
+}
+
+.cardBody {
+  display: grid;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+}
+
+.cardBodyCompact {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.cardBodyNormal {
+  grid-template-columns: 1fr;
+}
+
+.cardField {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.fieldLabel {
+  color: #9ca3af;
+  font-weight: 500;
+  font-family:
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fieldLabelCompact {
+  font-size: var(--font-size-2xs);
+}
+
+.fieldLabelNormal {
+  font-size: calc(var(--font-size-2xs) * 1.2);
+}
+
+.fieldValue {
+  font-weight: 600;
+  font-family:
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+  line-height: 1.3;
+}
+
+.fieldValueCompact {
+  font-size: var(--font-size-base);
+}
+
+.fieldValueNormal {
+  font-size: calc(var(--font-size-base) * 1.2);
+}
+
+.fieldValueModified {
+  color: #8c8c8c;
+}
+
+.fieldValueNormalColor {
+  color: #182230;
+}
+
+.footer {
+  border-top: 1px solid #f3f4f6;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  padding: 4px 8px;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.paginationText {
+  color: #666;
+  font-family:
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+.paginationTextCompact {
+  font-size: var(--font-size-sm);
+}
+
+.paginationTextNormal {
+  font-size: calc(var(--font-size-sm) * 1.2);
+}
+
+.paginationButton {
+  font-family:
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+}
+
+.paginationButtonCompact {
+  font-size: var(--font-size-sm);
+  height: 22px;
+}
+
+.paginationButtonNormal {
+  font-size: calc(var(--font-size-sm) * 1.2);
+  height: 22px;
+}
+
+.downloadButton {
+  font-family:
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+  height: 1.575rem;
+  width: 100%;
+}
+
+.downloadButtonCompact {
+  font-size: var(--font-size-sm);
+}
+
+.downloadButtonNormal {
+  font-size: calc(var(--font-size-sm) * 1.2);
+}
+
+.spacer {
+  flex: 1;
+}
+
+/* Responsive: Reduce spacing and font sizes at 900px and below */
+@media (max-height: 900px) {
+  .header {
+    padding: 6px 10px;
+  }
+
+  .indicatorBar {
+    height: 16px;
+    width: 5px;
+  }
+
+  .headerTitleNormal {
+    font-size: var(--font-size-lg);
+  }
+
+  .cardsGrid {
+    gap: 8px;
+    padding: 3px;
+  }
+
+  .card {
+    padding: 4px !important;
+  }
+
+  .cardHeader {
+    margin-bottom: 6px;
+    padding-bottom: 6px;
+  }
+
+  .cardHeaderDateNormal {
+    font-size: var(--font-size-md);
+  }
+
+  .cardBody {
+    gap: 6px;
+  }
+
+  .fieldLabelNormal {
+    font-size: var(--font-size-2xs);
+  }
+
+  .fieldValueNormal {
+    font-size: var(--font-size-base);
+  }
+
+  .footer {
+    padding: 3px 6px;
+  }
+
+  .paginationTextNormal {
+    font-size: var(--font-size-sm);
+  }
+
+  .paginationButtonNormal {
+    font-size: var(--font-size-sm);
+    height: 20px;
+  }
+
+  .downloadButtonNormal {
+    font-size: var(--font-size-sm);
+    height: 1.375rem;
+  }
+}

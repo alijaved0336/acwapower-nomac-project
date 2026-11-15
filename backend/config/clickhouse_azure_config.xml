@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<clickhouse>
+    <storage_configuration>
+        <disks>
+            <!-- Local disk for temporary data only -->
+            <default>
+                <type>local</type>
+                <path>/var/lib/clickhouse/</path>
+            </default>
+            
+            <!-- Azure Blob Storage as primary persistent storage -->
+            <azure_blob_storage>
+                <type>azure_blob_storage</type>
+                <storage_account_url>https://mpcswrosg.blob.core.windows.net</storage_account_url>
+                <container_name>swro</container_name>
+                <account_name>mpcswrosg</account_name>
+                <account_key>${AZURE_STORAGE_KEY}</account_key>
+                <max_single_read_retries>3</max_single_read_retries>
+                <max_single_download_retries>3</max_single_download_retries>
+                <retry_initial_backoff_ms>100</retry_initial_backoff_ms>
+                <retry_max_backoff_ms>3200</retry_max_backoff_ms>
+            </azure_blob_storage>
+        </disks>
+        
+        <policies>
+            <!-- Default policy using Azure Blob Storage for persistence -->
+            <default>
+                <volumes>
+                    <default>
+                        <disk>azure_blob_storage</disk>
+                    </default>
+                </volumes>
+            </default>
+            
+            <!-- Azure policy for all data -->
+            <azure_policy>
+                <volumes>
+                    <azure_volume>
+                        <disk>azure_blob_storage</disk>
+                    </azure_volume>
+                </volumes>
+            </azure_policy>
+        </policies>
+    </storage_configuration>
+    
+    <!-- Set Azure Blob Storage as default storage policy -->
+    <default_storage_policy>default</default_storage_policy>
+    
+    <!-- Prevent automatic cleanup -->
+    <merge_tree>
+        <max_suspicious_broken_parts>0</max_suspicious_broken_parts>
+        <merge_with_ttl_timeout>86400</merge_with_ttl_timeout>
+    </merge_tree>
+    
+    <!-- Disable automatic data deletion -->
+    <background_processing_pool_size>16</background_processing_pool_size>
+    <background_schedule_pool_size>16</background_schedule_pool_size>
+</clickhouse>

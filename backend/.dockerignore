@@ -1,0 +1,112 @@
+# Python cache and bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+.env/
+antenv/
+
+# Django specific
+*.log
+*.pot
+*.sqlite3
+*.db
+db.sqlite3
+local_settings.py
+media/
+
+# Static files (will be collected during build)
+staticfiles/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*.swn
+.DS_Store
+*.sublime-project
+*.sublime-workspace
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Documentation
+docs/
+*.md
+!README.md
+
+# Testing
+.coverage
+htmlcov/
+.tox/
+.pytest_cache/
+.coverage.*
+tests/
+test_*.py
+*_test.py
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+*.egg
+
+# Environment files (sensitive data)
+.env
+.env.*
+!.env.example
+
+# Azure specific
+.azure/
+azure-pipelines.yml
+AZURE_DEVOPS_SETUP.md
+
+# Docker files (avoid recursive copying)
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# Temporary files
+*.tmp
+*.temp
+tmp/
+temp/
+
+# Logs
+logs/
+*.log
+
+# OS specific
+Thumbs.db
+Desktop.ini
+
+# Jupyter Notebooks
+*.ipynb_checkpoints/
+*.ipynb
+
+# Package manager
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Pre-commit
+.pre-commit-config.yaml
+
+# Delta Lake local development data (will be mounted as volume)
+data/users/
+
+# Spark temp files
+spark-warehouse/
+metastore_db/
+derby.log

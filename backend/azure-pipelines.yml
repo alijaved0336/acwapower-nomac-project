@@ -1,0 +1,302 @@
+# Azure DevOps Pipeline for Django SWRO Backend (with bundled OpenJDK 17)
+trigger:
+  branches:
+    include:
+      - main
+      - develop
+      - azure-pipelineBE
+  paths:
+    exclude:
+      - README.md
+      - docs/*
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  - group: SWRO-Backend-Variables
+  - name: webAppName
+    value: "mpc-swro-be"
+  - name: azureServiceConnectionId
+    value: "MPC-DEV-SWRO-Serviceconnector"
+  - name: pythonVersion
+    value: '3.11'
+  - name: djangoSettingsModule
+    value: 'nomac.settings'
+  - name: buildConfiguration
+    value: 'Release'
+  - name: JRE_URL
+    value: "https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.13+11/OpenJDK17U-jre_x64_linux_hotspot_17.0.13_11.tar.gz"
+
+stages:
+- stage: Build
+  displayName: 'Build and Test'
+  jobs:
+  - job: BuildTest
+    displayName: 'Build and Test Job'
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+
+    - checkout: self
+      displayName: 'Checkout Repository'
+
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '$(pythonVersion)'
+      displayName: 'Use Python $(pythonVersion)'
+
+    # Cache pip deps
+    - task: Cache@2
+      inputs:
+        key: 'python | "$(Agent.OS)" | requirements.txt'
+        restoreKeys: |
+          python | "$(Agent.OS)"
+          python
+        path: $(Pipeline.Workspace)/.pip
+      displayName: 'Cache pip packages'
+
+    - script: |
+        python -m pip install --upgrade pip
+        pip install --cache-dir $(Pipeline.Workspace)/.pip -r requirements.txt
+      displayName: 'Install Python Dependencies'
+
+    # Ensure logs dir exists (for Django logging)
+    - script: |
+        mkdir -p $(System.DefaultWorkingDirectory)/logs
+        echo "Created logs directory at $(System.DefaultWorkingDirectory)/logs"
+      displayName: 'Create logs directory'
+
+    - script: |
+        python manage.py check --deploy
+        python manage.py makemigrations --dry-run --check
+        python manage.py test --verbosity=2 || true
+        python manage.py collectstatic --noinput --clear
+        echo "Static files collected successfully"
+        ls -la staticfiles/ || echo "No staticfiles directory found"
+      displayName: 'Run Django Checks & Tests'
+      env:
+        DJANGO_SETTINGS_MODULE: $(djangoSettingsModule)
+        SECRET_KEY: $(SECRET_KEY)
+        AZURE_TENANT_ID: $(AZURE_TENANT_ID)
+        AZURE_CLIENT_ID: $(AZURE_CLIENT_ID)
+        AZURE_CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
+        JWT_SECRET: $(JWT_SECRET)
+        DELTALAKE_USERS_TABLE_PATH: $(DELTALAKE_USERS_TABLE_PATH)
+        DEBUG: $(DEBUG)
+        ALLOWED_HOSTS: $(ALLOWED_HOSTS)
+        SERVER_HOSTNAME: $(SERVER_HOSTNAME)
+        HTTP_PATH: $(HTTP_PATH)
+        ACCESS_TOKEN: $(ACCESS_TOKEN)
+        AZURE_STORAGE_ACCOUNT: $(AZURE_STORAGE_ACCOUNT)
+        AZURE_STORAGE_KEY: $(AZURE_STORAGE_KEY)
+        # ClickHouse Configuration
+        CLICKHOUSE_HOST: $(CLICKHOUSE_HOST)
+        CLICKHOUSE_PORT: $(CLICKHOUSE_PORT)
+        CLICKHOUSE_USERNAME: $(CLICKHOUSE_USERNAME)
+        CLICKHOUSE_PASSWORD: $(CLICKHOUSE_PASSWORD)
+        CLICKHOUSE_DATABASE: $(CLICKHOUSE_DATABASE)
+        CLICKHOUSE_CONNECT_TIMEOUT: $(CLICKHOUSE_CONNECT_TIMEOUT)
+        CLICKHOUSE_SEND_RECEIVE_TIMEOUT: $(CLICKHOUSE_SEND_RECEIVE_TIMEOUT)
+        # Redis Configuration
+        REDIS_HOST: $(REDIS_HOST)
+        REDIS_PORT: $(REDIS_PORT)
+        REDIS_PASSWORD: $(REDIS_PASSWORD)
+        REDIS_DB: $(REDIS_DB)
+        REDIS_MAX_CONNECTIONS: $(REDIS_MAX_CONNECTIONS)
+        REDIS_IDLE_TIMEOUT: $(REDIS_IDLE_TIMEOUT)
+        # Azure Storage Container for ClickHouse
+        AZURE_STORAGE_CONTAINER: $(AZURE_STORAGE_CONTAINER)
+
+    # Prepare Deployment Package
+    - script: |
+        mkdir -p $(Build.ArtifactStagingDirectory)/app
+        cp -r . $(Build.ArtifactStagingDirectory)/app/
+        rm -rf $(Build.ArtifactStagingDirectory)/app/.git
+        rm -rf $(Build.ArtifactStagingDirectory)/app/.gitignore
+        rm -rf $(Build.ArtifactStagingDirectory)/app/__pycache__
+        rm -rf $(Build.ArtifactStagingDirectory)/app/venv
+        rm -rf $(Build.ArtifactStagingDirectory)/app/temp_output.log
+        rm -rf $(Build.ArtifactStagingDirectory)/app/debug_modules.py
+        find $(Build.ArtifactStagingDirectory)/app -name "*.pyc" -delete
+        find $(Build.ArtifactStagingDirectory)/app -name "__pycache__" -type d -exec rm -rf {} + || true
+        
+        # Ensure staticfiles directory exists and is properly copied
+        if [ -d "staticfiles" ]; then
+            echo "Static files directory found and will be included in deployment"
+            ls -la staticfiles/ | head -10
+        else
+            echo "Warning: No staticfiles directory found - this may cause 404 errors for static assets"
+        fi
+        
+        # Ensure startup.sh is executable
+        chmod +x $(Build.ArtifactStagingDirectory)/app/startup.sh
+      displayName: 'Prepare Deployment Package'
+
+    # === Bundle portable OpenJDK 17 inside the artifact ===
+    - script: |
+        set -e
+        APP_DIR="$(Build.ArtifactStagingDirectory)/app"
+
+        mkdir -p "$APP_DIR/.java"
+        cd "$APP_DIR"
+
+        echo "Downloading OpenJDK from: $(JRE_URL)"
+        curl -L -o openjdk17.tar.gz "$(JRE_URL)"
+
+        echo "Extracting to .java..."
+        tar -xzf openjdk17.tar.gz -C .java --strip-components=1
+        rm -f openjdk17.tar.gz
+
+        # Spark temp dir (inside package, not used at runtime)
+        mkdir -p "$APP_DIR/tmp"
+      displayName: 'Bundle portable OpenJDK 17'
+
+    - script: |
+        APP_DIR="$(Build.ArtifactStagingDirectory)/app"
+        "$APP_DIR/.java/bin/java" -version
+      displayName: 'Verify JRE version (staging)'
+
+    # Archive files for deployment
+    - task: ArchiveFiles@2
+      displayName: 'Archive app for deployment'
+      inputs:
+        rootFolderOrFile: '$(Build.ArtifactStagingDirectory)/app'
+        includeRootFolder: false
+        archiveType: zip
+        archiveFile: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+        replaceExistingArchive: true
+
+    # ✅ Verify after archive that JRE is inside ZIP and check package size
+    - script: |
+        set -e
+        echo "Checking ZIP exists at: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip"
+        ls -lh "$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip"
+        echo "Package size details:"
+        du -sh "$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip"
+        echo "Looking for .java/bin/java inside the ZIP…"
+        unzip -l "$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip" | grep '\.java/bin/java'
+        echo "Checking key application files are present..."
+        unzip -l "$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip" | grep 'manage.py' || echo "Warning: manage.py not found in ZIP"
+        unzip -l "$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip" | grep 'requirements.txt' || echo "Warning: requirements.txt not found in ZIP"
+      displayName: 'Verify JRE and package size'
+
+    - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+      artifact: drop
+
+- stage: Deploy
+  displayName: 'Deploy to Azure'
+  dependsOn: Build
+  condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Build.SourceBranch'], 'refs/heads/azure-pipelineBE'), eq(variables['Build.SourceBranch'], 'refs/heads/feat/spark-integration'), eq(variables['Build.SourceBranch'], 'refs/heads/feature/clickhouse-service')))
+  jobs:
+  - deployment: DeployToAzure
+    displayName: 'Deploy to Azure App Service'
+    environment: 'production'
+    pool:
+      vmImage: 'ubuntu-latest'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          # 1) Get the artifact produced in Build stage
+          - task: DownloadPipelineArtifact@2
+            inputs:
+              artifact: drop
+              path: $(Pipeline.Workspace)/drop
+
+          # 2) Sanity check the zip we're about to deploy
+          - script: |
+              ls -lh "$(Pipeline.Workspace)/drop"
+              test -f "$(Pipeline.Workspace)/drop/$(Build.BuildId).zip"
+              unzip -l "$(Pipeline.Workspace)/drop/$(Build.BuildId).zip" | head -n 60
+            displayName: 'Verify deployment ZIP'
+
+          # 2.5) Check App Service status before deployment
+          - script: |
+              echo "Checking App Service status..."
+              az webapp show --name $(webAppName) --resource-group ACWA-DEV-MPC-SWRO-RG01 --query "state" -o tsv
+              echo "App Service state checked"
+            displayName: 'Check App Service Status'
+            continueOnError: true
+
+          # 3) Deploy with retry logic
+          - task: AzureWebApp@1
+            displayName: 'Azure Web App Deploy'
+            timeoutInMinutes: 90
+            inputs:
+              azureSubscription: '$(azureServiceConnectionId)'
+              appType: 'webAppLinux'
+              appName: '$(webAppName)'
+              package: '$(Pipeline.Workspace)/drop/$(Build.BuildId).zip'
+              runtimeStack: 'PYTHON|3.11'
+              startUpCommand: 'gunicorn nomac.wsgi:application --bind=0.0.0.0:8000 --workers=1 --threads=4 --worker-class=gthread --timeout=120 --access-logfile=- --error-logfile=-'
+              deploymentMethod: 'zipDeploy'
+              enableCustomDeployment: true
+              deploymentType: 'zipDeploy'
+              appSettings: |
+                DJANGO_SETTINGS_MODULE=$(djangoSettingsModule)
+                WEBSITES_PORT=8000
+                # Let Oryx install pip deps; keep requirements.txt at repo root
+                SCM_DO_BUILD_DURING_DEPLOYMENT=true
+                ENABLE_ORYX_BUILD=true
+                DISABLE_COLLECTSTATIC=false
+                ORYX_DISABLE_TELEMETRY=true
+                # Force static files collection during deployment
+                POST_BUILD_COMMAND=python manage.py collectstatic --noinput
+                PYTHONDONTWRITEBYTECODE=1
+                PYTHONPATH=/home/site/wwwroot
+                # Enable APScheduler for automated daily migrations
+                ENABLE_SCHEDULER=true
+                # Prefer run-from-package for safer, atomic deploys
+                WEBSITE_RUN_FROM_PACKAGE=1
+                # Java for Spark
+                JAVA_HOME=/home/site/wwwroot/.java
+                PATH=/home/site/wwwroot/.java/bin:/opt/python/3.11.13/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+                SPARK_LOCAL_DIRS=/tmp/spark
+                PYSPARK_PYTHON=python
+                SPARK_SQL_ADAPTIVE_ENABLED=true
+                SPARK_SQL_ADAPTIVE_COALESCE_PARTITIONS_ENABLED=true
+                SPARK_SQL_ADAPTIVE_SKEW_JOIN_ENABLED=true
+                SPARK_SQL_FILES_MAX_PARTITION_BYTES=32m
+                SPARK_SQL_SHUFFLE_PARTITIONS=4
+                SPARK_EXECUTOR_INSTANCES=1
+                SPARK_EXECUTOR_CORES=2
+                SPARK_EXECUTOR_MEMORY=1g
+                SPARK_DRIVER_MEMORY=512m
+                SPARK_SERIALIZER=org.apache.spark.serializer.KryoSerializer
+                SPARK_SQL_PARQUET_PUSHDOWN_DATE=false
+                SPARK_SQL_PARQUET_PUSHDOWN_TIMESTAMP=false
+                SPARK_SQL_PARQUET_MERGE_SCHEMA=false
+                SPARK_SQL_PARQUET_RESPECT_SUMMARY_FILES=false
+                # Secrets / env
+                SECRET_KEY=$(SECRET_KEY)
+                AZURE_TENANT_ID=$(AZURE_TENANT_ID)
+                AZURE_CLIENT_ID=$(AZURE_CLIENT_ID)
+                AZURE_CLIENT_SECRET=$(AZURE_CLIENT_SECRET)
+                JWT_SECRET=$(JWT_SECRET)
+                DELTALAKE_USERS_TABLE_PATH=$(DELTALAKE_USERS_TABLE_PATH)
+                DEBUG=$(DEBUG)
+                ALLOWED_HOSTS=$(ALLOWED_HOSTS)
+                SERVER_HOSTNAME=$(SERVER_HOSTNAME)
+                HTTP_PATH=$(HTTP_PATH)
+                ACCESS_TOKEN=$(ACCESS_TOKEN)
+                AZURE_STORAGE_ACCOUNT=$(AZURE_STORAGE_ACCOUNT)
+                AZURE_STORAGE_KEY=$(AZURE_STORAGE_KEY)
+                # ClickHouse Configuration
+                CLICKHOUSE_HOST=$(CLICKHOUSE_HOST)
+                CLICKHOUSE_PORT=$(CLICKHOUSE_PORT)
+                CLICKHOUSE_USERNAME=$(CLICKHOUSE_USERNAME)
+                CLICKHOUSE_PASSWORD=$(CLICKHOUSE_PASSWORD)
+                CLICKHOUSE_DATABASE=$(CLICKHOUSE_DATABASE)
+                CLICKHOUSE_CONNECT_TIMEOUT=$(CLICKHOUSE_CONNECT_TIMEOUT)
+                CLICKHOUSE_SEND_RECEIVE_TIMEOUT=$(CLICKHOUSE_SEND_RECEIVE_TIMEOUT)
+                # Redis Configuration
+                REDIS_HOST=$(REDIS_HOST)
+                REDIS_PORT=$(REDIS_PORT)
+                REDIS_PASSWORD=$(REDIS_PASSWORD)
+                REDIS_DB=$(REDIS_DB)
+                REDIS_MAX_CONNECTIONS=$(REDIS_MAX_CONNECTIONS)
+                REDIS_IDLE_TIMEOUT=$(REDIS_IDLE_TIMEOUT)
+                ENABLE_SCHEDULER=$(ENABLE_SCHEDULER)
+                # Azure Storage Container for ClickHouse
+                AZURE_STORAGE_CONTAINER=$(AZURE_STORAGE_CONTAINER)

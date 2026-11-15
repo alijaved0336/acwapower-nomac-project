@@ -1,0 +1,103 @@
+# UV-based Multi-stage Dockerfile for SWRO Backend Django Application
+# Using UV for ultra-fast Python dependency management
+
+# Stage 1: Base UV image with Python 3.12
+FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim AS uv-base
+
+# Install system dependencies required for PySpark and other packages
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    # Build dependencies
+    gcc \
+    g++ \
+    build-essential \
+    libpq-dev \
+    # Java runtime for PySpark
+    openjdk-17-jre-headless \
+    # Utilities
+    curl \
+    wget \
+    procps \
+    netcat-openbsd \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set Java environment
+ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+ENV PATH="${JAVA_HOME}/bin:${PATH}"
+ENV DOCKER_CONTAINER=1
+
+# Stage 2: Dependencies layer using UV
+FROM uv-base AS deps
+
+# Set working directory
+WORKDIR /app
+
+# Copy UV configuration files first for optimal caching
+COPY pyproject.toml ./
+
+# Enable UV cache for faster subsequent builds
+ENV UV_CACHE_DIR=/root/.cache/uv
+
+# Install dependencies using UV (much faster than pip)
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --no-install-project
+
+# Stage 3: Final production image
+FROM uv-base AS final
+
+# Create non-root user for security
+RUN groupadd -r django && useradd -r -g django django
+
+# Set working directory
+WORKDIR /app
+
+# Copy virtual environment from deps stage
+COPY --from=deps /app/.venv /app/.venv
+
+# Ensure we use the virtual environment
+ENV PATH="/app/.venv/bin:$PATH"
+ENV VIRTUAL_ENV="/app/.venv"
+
+# Set Python environment variables
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV DJANGO_SETTINGS_MODULE=nomac.settings
+
+# PySpark environment variables
+ENV PYSPARK_PYTHON=python
+ENV PYSPARK_DRIVER_PYTHON=python
+ENV SPARK_LOCAL_DIRS=/tmp/spark
+ENV SPARK_HOME=/app/.venv/lib/python3.12/site-packages/pyspark
+
+# Create necessary directories
+RUN mkdir -p /tmp/spark /app/logs /app/staticfiles /app/data
+
+# Copy application code
+COPY --chown=django:django . .
+
+# Fix line endings and ensure startup script has proper permissions
+RUN sed -i 's/\r$//' /app/startup.sh && \
+    chmod +x /app/startup.sh
+
+# Create Ivy cache directory for PySpark with proper permissions
+RUN mkdir -p /home/django/.ivy2.5.2/cache && \
+    mkdir -p /home/django/.ivy2.5.2/jars && \
+    chown -R django:django /home/django
+
+# Set ownership for Django user
+RUN chown -R django:django /app /tmp/spark
+
+# Switch to non-root user
+USER django
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:8000/health/ || exit 1
+
+# Expose port
+EXPOSE 8000
+
+# Use startup script as entrypoint
+ENTRYPOINT ["/app/startup.sh"]
+
+# Default command
+CMD ["gunicorn", "nomac.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "2", "--threads", "4", "--worker-class", "gthread", "--timeout", "120", "--access-logfile", "-", "--error-logfile", "-"]

@@ -1,0 +1,23 @@
+/* Compact First Pass Time Series Styles */
+
+.container {
+  height: 100%;
+  width: 100%;
+  position: relative;
+}
+
+.spinnerOverlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background-color: rgba(240, 240, 240, 0.95);
+}
+
+:global(.dark) .spinnerOverlay {
+  background-color: rgba(20, 20, 20, 0.9);
+}
+

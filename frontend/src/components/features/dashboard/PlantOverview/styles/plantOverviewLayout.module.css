@@ -1,0 +1,240 @@
+/* Plant Overview Layout Styles */
+
+/* Main container */
+.mainContainer {
+  height: 100vh;
+  /* overflow: hidden; */
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8eef5 100%);
+}
+
+/* Dark mode variant - ONLY ADD, DO NOT MODIFY ABOVE */
+:global(.dark) .mainContainer {
+  background: linear-gradient(135deg, #0a0a0a 0%, #141414 100%);
+}
+
+/* Content container for tabs */
+.contentContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  overflow: hidden;
+  padding: 8px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Stat cards row */
+.statCardsRow {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  gap: 8px;
+}
+
+/* All tab - First row (3 columns) */
+.allTabFirstRow {
+  flex: 0 0 25%;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  overflow: hidden;
+  min-width: 0;
+}
+
+/* Production tab - First row (2 columns) */
+.productionTabFirstRow {
+  flex: 0 0 38%;
+  display: grid;
+  grid-template-columns: 78% 21%;
+  gap: 8px;
+  overflow: hidden;
+  min-width: 0;
+}
+
+/* Second row - flexible height */
+.secondRow {
+  flex: 1;
+  overflow: hidden;
+  min-width: 0;
+  min-height: 0;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Card wrappers */
+.cardWrapper {
+  /* overflow: hidden; */
+  /* border-radius: 12px; */
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  border-radius: 12px;
+}
+
+/* Line Chart Card */
+.lineChartCard {
+  /* border: 2px solid #3b82f6; */
+  /* box-shadow:
+    0 4px 12px rgba(59, 130, 246, 0.15),
+    0 2px 4px rgba(0, 0, 0, 0.06); */
+  background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
+}
+
+/* Dark mode variant - ONLY ADD, DO NOT MODIFY ABOVE */
+:global(.dark) .lineChartCard {
+  /* border: 2px solid #3db8f5; */
+  box-shadow:
+    0 4px 12px rgba(61, 184, 245, 0.2),
+    0 2px 4px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(135deg, #1a1a1a 0%, #0f172a 100%);
+}
+
+.statsandProductionChartWrapper {
+  grid-column: span 2;
+  padding: 8px;
+  /* border: 2px solid #8b5cf6; */
+  border-radius: 12px;
+  box-shadow:
+    0 4px 12px rgba(139, 92, 246, 0.12),
+    0 2px 4px rgba(0, 0, 0, 0.06);
+  background: #ffffff;
+  /* background: linear-gradient(135deg, #ffffff 0%, #f5f3ff 100%); */
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 0;
+}
+
+/* Dark mode variant - ONLY ADD, DO NOT MODIFY ABOVE */
+:global(.dark) .statsandProductionChartWrapper {
+  /* border: 2px   solid #a78bfa; */
+  box-shadow:
+    0 4px 12px rgba(167, 139, 250, 0.2),
+    0 2px 4px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(135deg, #1a1a1a 0%, #1e1b2e 100%);
+}
+
+/* Daily Report Card */
+.dailyReportCard {
+  /* border: 2px solid #8b5cf6;
+  box-shadow:
+    0 4px 12px rgba(139, 92, 246, 0.12),
+    0 2px 4px rgba(0, 0, 0, 0.06);
+  background: linear-gradient(135deg, #ffffff 0%, #f5f3ff 100%); */
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* Operational Status Card */
+.operationalStatusCard {
+  /* border: 2px solid #0ea5e9; */
+  box-shadow:
+    0 4px 12px rgba(14, 165, 233, 0.12),
+    0 2px 4px rgba(0, 0, 0, 0.06);
+  background: linear-gradient(180deg, #f0f9ff 0%, #ffffff 100%);
+}
+
+/* Dark mode variant - ONLY ADD, DO NOT MODIFY ABOVE */
+:global(.dark) .operationalStatusCard {
+  /* border: 2px solid #3db8f5; */
+  box-shadow:
+    0 4px 12px rgba(61, 184, 245, 0.2),
+    0 2px 4px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(180deg, #0f172a 0%, #1a1a1a 100%);
+}
+
+/* Process Condition Card */
+.processConditionCard {
+  /* border: 2px solid #10b981; */
+  box-shadow:
+    0 4px 12px rgba(16, 185, 129, 0.15),
+    0 2px 4px rgba(0, 0, 0, 0.06);
+  background: linear-gradient(135deg, #ffffff 0%, #ecfdf5 100%);
+}
+
+/* Dark mode variant - ONLY ADD, DO NOT MODIFY ABOVE */
+:global(.dark) .processConditionCard {
+  /* border: 2px solid #47cd89; */
+  box-shadow:
+    0 4px 12px rgba(71, 205, 137, 0.2),
+    0 2px 4px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(135deg, #1a1a1a 0%, #0f1e1a 100%);
+}
+
+/* Filter button */
+.filterButton {
+  position: fixed !important;
+  bottom: 24px !important;
+  right: 50px !important;
+  z-index: 1000 !important;
+  width: 56px !important;
+  height: 56px !important;
+  min-width: 56px !important;
+  /* border-radius: 50% !important; */
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow:
+    0 8px 24px rgba(24, 144, 255, 0.3),
+    0 4px 12px rgba(0, 0, 0, 0.1) !important;
+  background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%) !important;
+  /* border: none !important; */
+  font-size: var(--font-size-4xl) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  cursor: pointer !important;
+  padding: 0 !important;
+}
+
+.filterButton:hover {
+  transform: scale(1.1) !important;
+  box-shadow:
+    0 12px 32px rgba(24, 144, 255, 0.4),
+    0 6px 16px rgba(0, 0, 0, 0.15) !important;
+}
+
+.filterButton:focus {
+  transform: scale(1.1) !important;
+  box-shadow:
+    0 12px 32px rgba(24, 144, 255, 0.4),
+    0 6px 16px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Wrapper for components with loading state */
+.componentWrapper {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+
+/* Responsive: Reduce spacing and adjust proportions at 900px and below */
+@media (max-height: 900px) {
+  .contentContainer {
+    padding: 4px;
+    gap: 3px;
+  }
+
+  .statCardsRow {
+    gap: 4px;
+  }
+
+  .allTabFirstRow {
+    flex: 0 0 22%;
+    gap: 4px;
+  }
+
+  .productionTabFirstRow {
+    flex: 0 0 34%;
+    gap: 4px;
+  }
+
+  .secondRow {
+    gap: 3px;
+  }
+}

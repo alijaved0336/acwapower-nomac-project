@@ -1,0 +1,26 @@
+Django==5.2.4
+djangorestframework==3.16.0
+gunicorn==23.0.0
+pyspark==4.0.0
+delta-spark==4.0.0
+drf-yasg==1.21.10
+django-cors-headers==4.7.0
+django-redis==6.0.0
+redis==6.4.0
+pyarrow==21.0.0
+PyJWT==2.10.1
+python-dotenv==1.1.1
+deltalake==1.1.4
+# pandas==2.2.3     # Removed for performance - using Spark/PyArrow instead
+python-json-logger==3.3.0
+whitenoise==6.8.2
+flake8==7.3.0
+black==25.1.0
+isort==6.0.1
+databricks-sdk==0.63.0
+databricks-sql-connector==4.0.5
+azure-storage-blob==12.19.0
+azure-storage-file-datalake==12.14.0
+azure-identity==1.15.0
+clickhouse-connect>=0.7.0
+APScheduler==3.10.4

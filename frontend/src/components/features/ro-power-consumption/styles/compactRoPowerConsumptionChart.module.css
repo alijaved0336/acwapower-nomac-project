@@ -1,0 +1,171 @@
+/* Compact RO Power Consumption Chart Component Styles */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  height: 100%;
+}
+
+.chartWrapper {
+  flex-grow: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 162px);
+  width: 100%;
+}
+
+/* When containing UAQ charts, use viewport-based height calculation */
+.chartWrapperUaq {
+  height: calc(100vh - 162px) !important;
+  overflow: hidden;
+  flex-grow: 1;
+}
+
+.chartContent {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Loading state */
+.loadingContainer {
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  padding: 16px;
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 340px;
+  color: #6b7280;
+}
+
+:global(.dark) .loadingContainer {
+  background: #1a1a1a;
+  border: 1px solid #e5e7eb;
+  color: #e2e8f0;
+}
+
+/* Error state */
+.errorContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: #ef4444;
+}
+
+/* Empty state */
+.emptyContainer {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 250px;
+  color: #6b7280;
+}
+
+:global(.dark) .emptyContainer {
+  background: #1a1a1a;
+  border: 1px solid #e5e7eb;
+  color: #e2e8f0;
+}
+
+/* UAQ Stream Charts Container */
+.uaqChartsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  height: calc(100vh - 162px);
+  overflow: hidden;
+  flex: 1 1 auto;
+  /* Three charts at 250px each + 16px gaps: 250*3 + 16*2 = 782px */
+}
+
+.uaqChartWrapper {
+  width: 100%;
+  height: 250px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Responsive: Adjust height at 900px and below */
+@media (max-height: 900px) {
+  .container {
+    gap: 4px;
+  }
+
+  .chartWrapper {
+    height: calc(100vh - 150px);
+  }
+
+  .loadingContainer {
+    height: 300px;
+  }
+
+  .emptyContainer {
+    height: 250px;
+  }
+
+  .chartWrapperUaq {
+    height: calc(100vh - 150px) !important;
+  }
+
+  .uaqChartsContainer {
+    height: calc(100vh - 150px);
+  }
+
+  .uaqChartWrapper {
+    height: 220px;
+  }
+}
+
+/* Weighted Charts Container */
+.weightedChartsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  height: 100%;
+  width: 100%;
+}
+
+/* Weighted Chart Card */
+.weightedChartCard {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  padding: 16px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+  width: 100%;
+}
+
+:global(.dark) .weightedChartCard {
+  background: #1a1a1a;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 8px 24px rgba(2, 6, 23, 0.7);
+}
+
+/* First chart card - 70% height (flex: 7) */
+.weightedChartCardLarge {
+  flex: 7;
+}
+
+/* Second chart card - 30% height (flex: 3) */
+.weightedChartCardSmall {
+  flex: 3;
+}

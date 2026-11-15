@@ -1,0 +1,74 @@
+
+# Virtual Environments
+venv/
+env/
+ENV/
+.venv/
+.logs/
+*.logs
+*.log
+*.json
+*.parquet
+
+# Django
+*.pot
+*.pyc
+*.sqlite3
+db.sqlite3
+media/
+staticfiles/
+static/
+logs/*
+!logs/.gitkeep
+
+
+# Django Migrations (optional – if you want to ignore compiled migrations)
+**/migrations/*.pyc
+**/migrations/__pycache__/
+
+# Secrets and Environment Variables
+.env
+.env.*
+
+# VSCode
+.vscode/
+
+# PyCharm
+.idea/
+*.iml
+
+# macOS
+.DS_Store
+
+# Coverage Reports
+htmlcov/
+.coverage
+coverage.xml
+*.cover
+
+# Test Results
+*.pytest_cache/
+.tox/
+.nox/
+.cache/
+
+# MyPy
+.mypy_cache/
+
+# PEP 582; used by some tools like `pdm`
+__pypackages__/
+
+# Jupyter Notebooks (if any)
+.ipynb_checkpoints/
+
+# Node (if you use npm for frontend in Django)
+node_modules/
+package-lock.json
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+
+# Tools
+docs/

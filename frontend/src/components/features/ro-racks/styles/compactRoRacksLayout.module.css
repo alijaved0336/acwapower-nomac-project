@@ -1,0 +1,87 @@
+/* Compact RO Racks Layout Styles */
+
+/* Quality cards row */
+.qualityCardsRow {
+  grid-column: 1 / -1;
+  min-width: 0;
+  height: 100%;
+}
+
+/* Chart and operational status row */
+.chartTableRow {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 6px;
+  min-width: 0;
+  overflow: hidden;
+  height: 100%;
+  max-height: 100%; /* ADD THIS - prevents row 2 from expanding */
+}
+
+/* Chart wrapper */
+.chartWrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+  height: 100%;
+  max-height: 100%; /* ADD THIS */
+}
+
+/* Operational status wrapper */
+.operationalStatusWrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+  height: 100%;
+  max-height: 100%; /* ADD THIS */
+}
+
+/* Racks performance table row */
+.racksTableRow {
+  grid-column: 1 / -1;
+  overflow: hidden;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  display: flex; /* ADD THIS - ensures proper sizing */
+  flex-direction: column; /* ADD THIS */
+}
+
+/* Tab icon styles */
+.tabIcon {
+  font-size: 12px;
+}
+
+.tabIconActive {
+  font-weight: 600;
+  color: #fff !important;
+}
+
+.tabIconInactive {
+  font-weight: 400;
+  color: #666;
+}
+
+/* Filter select full width */
+.filterSelect {
+  width: 100%;
+}
+
+/* Responsive: Reduce spacing and adjust proportions at 900px and below */
+@media (max-height: 900px) {
+  .chartTableRow {
+    gap: 4px;
+  }
+
+  .racksTableRow {
+    gap: 3px;
+  }
+}
+.tableWrapper :global(.ant-table-measure-row) {
+  visibility: hidden;
+  height: 0 !important;
+}

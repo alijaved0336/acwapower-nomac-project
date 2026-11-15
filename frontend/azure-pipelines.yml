@@ -1,0 +1,189 @@
+trigger:
+  - main
+  - staging
+
+# Add PR trigger for validation
+pr:
+  - main
+  - staging
+
+variables:
+  webAppName: "mpc-swro-fe" # Replace with your actual Web App name
+  azureServiceConnectionId: "MPC-DEV-SWRO-Serviceconnector"
+  nodeVersion: "22.x" # Must match Azure Web App Node.js version
+
+stages:
+  - stage: Build
+    displayName: Build stage
+    jobs:
+      - job: Build
+        displayName: Build
+        pool:
+          vmImage: "ubuntu-latest"
+
+        steps:
+          - task: NodeTool@0
+            inputs:
+              versionSpec: "$(nodeVersion)"
+            displayName: "Install Node.js"
+
+          - script: |
+              echo "Installing dependencies..."
+              npm ci --production=false
+              echo "Building Next.js application..."
+              npm run build
+              echo "Build completed successfully"
+              echo "Checking build output:"
+              ls -la .next/
+              echo "Checking .next/standalone:"
+              ls -la .next/standalone/ || echo "No standalone directory"
+              echo "Checking .next/server:"
+              ls -la .next/server/ || echo "No server directory"
+            displayName: "Install dependencies and build"
+
+          # Optional: Add test step if you want to run tests in PR validation
+          - script: |
+              echo "Running tests..."
+              npm run test
+              echo "Tests completed successfully"
+            displayName: "Run tests"
+            condition: succeededOrFailed() # Run tests even if build fails
+
+          # Verify build output before copying
+          - script: |
+              echo "Verifying build output..."
+              if [ ! -d ".next" ]; then
+                echo "ERROR: .next directory not found after build!"
+                exit 1
+              fi
+              if [ ! -d ".next/server" ]; then
+                echo "ERROR: .next/server directory not found after build!"
+                exit 1
+              fi
+              echo "Build verification passed"
+            displayName: "Verify build output"
+
+          # Copy files needed for production
+          - task: CopyFiles@2
+            displayName: "Copy production files"
+            inputs:
+              SourceFolder: "$(System.DefaultWorkingDirectory)"
+              Contents: |
+                .next/**
+                public/**
+                package.json
+                package-lock.json
+                next.config.*
+                server.js
+                web.config
+                node_modules/** # <--- Add this line
+                docs/**
+                src/**
+              TargetFolder: "$(Build.ArtifactStagingDirectory)/app"
+              OverWrite: true
+
+          # Install all dependencies (including TypeScript) in the staging directory
+          - script: |
+              cd "$(Build.ArtifactStagingDirectory)/app"
+              echo "Installing all dependencies..."
+              npm ci
+              echo "All dependencies installed"
+
+              echo "Checking final package structure:"
+              ls -la
+              echo "Checking .next directory:"
+              ls -la .next/ || echo ".next directory not found!"
+              echo "Checking .next/standalone directory:"
+              ls -la .next/standalone/ || echo ".next/standalone directory not found!"
+              echo "Checking node_modules:"
+              ls -la node_modules/ | head -10
+              echo "Checking TypeScript installation:"
+              npx tsc --version || echo "TypeScript not found"
+            displayName: "Install all dependencies"
+
+          - task: ArchiveFiles@2
+            displayName: "Archive app for deployment"
+            inputs:
+              rootFolderOrFile: "$(Build.ArtifactStagingDirectory)/app"
+              includeRootFolder: false
+              archiveType: zip
+              archiveFile: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+              replaceExistingArchive: true
+
+          - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+            artifact: drop
+
+  - stage: DeployStaging
+    displayName: Deploy to Staging
+    dependsOn: Build
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/staging'))
+    jobs:
+      - deployment: DeployStaging
+        displayName: Deploy to Staging
+        environment: "staging"
+        pool:
+          vmImage: "ubuntu-latest"
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: AzureWebApp@1
+                  displayName: "Azure Web App Deploy"
+                  timeoutInMinutes: 20
+                  inputs:
+                    azureSubscription: $(azureServiceConnectionId)
+                    appType: "webAppLinux"
+                    appName: $(webAppName)
+                    package: $(Pipeline.Workspace)/drop/$(Build.BuildId).zip
+                    runtimeStack: "NODE|22-lts"
+                    startUpCommand: "node server.js"
+                    deploymentMethod: "zipDeploy"
+                    appSettings: |
+                      -WEBSITES_ENABLE_APP_SERVICE_STORAGE false
+                      -WEBSITE_NODE_DEFAULT_VERSION 22.17.0
+                      -SCM_DO_BUILD_DURING_DEPLOYMENT false
+                      -ENABLE_ORYX_BUILD false
+                      -NODE_ENV production
+                      -NEXTAUTH_URL https://mpc-swro-fe-dab2cma2aehkecbu.uaenorth-01.azurewebsites.net
+                      -NEXT_PUBLIC_API_BASE_URL https://mpc-swro-be-bgc6eph6ggb3awd3.uaenorth-01.azurewebsites.net
+                      -WEBSITES_NODE_DEFAULT_VERSION 22.17.0
+                      -NPM_CONFIG_PRODUCTION false
+
+  # =============================================================================
+  # PRODUCTION DEPLOYMENT STAGE
+  # =============================================================================
+  - stage: DeployProduction
+    displayName: Deploy to Production
+    dependsOn: Build
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    jobs:
+      - deployment: DeployProduction
+        displayName: Deploy to Production
+        environment: "production-swro"
+        pool:
+          vmImage: "ubuntu-latest"
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: AzureWebApp@1
+                  displayName: "Azure Web App Deploy to Production"
+                  timeoutInMinutes: 20
+                  inputs:
+                    azureSubscription: "MPC-PROD-SWRO-Serviceconnector"
+                    appType: "webAppLinux"
+                    appName: "mpc-swro-prod-fe"
+                    package: $(Pipeline.Workspace)/drop/$(Build.BuildId).zip
+                    runtimeStack: "NODE|22-lts"
+                    startUpCommand: "node server.js"
+                    deploymentMethod: "zipDeploy"
+                    appSettings: |
+                      -WEBSITES_ENABLE_APP_SERVICE_STORAGE false
+                      -WEBSITE_NODE_DEFAULT_VERSION 22.17.0
+                      -SCM_DO_BUILD_DURING_DEPLOYMENT false
+                      -ENABLE_ORYX_BUILD false
+                      -NODE_ENV production
+                      -NEXTAUTH_URL https://mpc-swro-prod-fe.azurewebsites.net
+                      -NEXT_PUBLIC_API_BASE_URL https://mpc-swro-prod-be.azurewebsites.net
+                      -WEBSITES_NODE_DEFAULT_VERSION 22.17.0
+                      -NPM_CONFIG_PRODUCTION false

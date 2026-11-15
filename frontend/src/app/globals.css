@@ -1,0 +1,599 @@
+@import "tailwindcss";
+
+/* Enable class-based dark mode for Tailwind v4 */
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+/* Dark mode root variables */
+.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+
+  /* Override semantic tokens for dark mode */
+  --color-text-base: #f0f0f0;
+  --color-text-secondary: #a0aec0;
+  --color-text-tertiary: #718096;
+  --color-text-placeholder: #718096;
+  --color-text-disabled: #4a5568;
+  --color-text-heading: #f7fafc;
+
+  /* Dark mode backgrounds */
+  --color-bg-base: #0a0a0a;
+  --color-bg-container: #1a1a1a;
+  --color-bg-elevated: #262626;
+  --color-bg-layout: #141414;
+
+  /* Dark mode borders */
+  --color-border: #3f3f3f;
+  --color-border-secondary: #2d2d2d;
+
+  /* Dark mode icons */
+  --color-icon: #a0aec0;
+  --color-icon-hover: #cbd5e0;
+}
+
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-figtree: var(--font-figtree), sans-serif;
+
+  /* 🎨 Base Color Palette */
+
+  /* Blue */
+  --color-blue-0: #f5faff;
+  --color-blue-1: #e3f2fd;
+  --color-blue-2: #bbdefb;
+  --color-blue-3: #64b5f6;
+  --color-blue-4: #64b5f6;
+  --color-blue-5: #42a5f5;
+  --color-blue-6: #2196f3;
+  --color-blue-7: #1e88e5;
+  --color-blue-8: #1565c0;
+  --color-blue-9: #0057b2;
+  --color-blue-10: #0d47a1;
+
+  /* Red */
+  --color-red-0: #fffafa;
+  --color-red-1: #feebee;
+  --color-red-2: #fecdd2;
+  --color-red-3: #ef9a9a;
+  --color-red-4: #e57373;
+  --color-red-5: #ef5350;
+  --color-red-6: #f44336;
+  --color-red-7: #e53935;
+  --color-red-8: #d32f2f;
+  --color-red-9: #ad2525;
+  --color-red-10: #821c1c;
+
+  /* Orange */
+  --color-orange-0: #fffcf5;
+  --color-orange-1: #fff3e0;
+  --color-orange-2: #ffe0b2;
+  --color-orange-3: #ffcc80;
+  --color-orange-4: #ffb74d;
+  --color-orange-5: #ffa726;
+  --color-orange-6: #ff9800;
+  --color-orange-7: #fb8c00;
+  --color-orange-8: #f57c00;
+  --color-orange-9: #ef6c00;
+  --color-orange-10: #e65100;
+
+  /* Turmeric */
+  --color-turmeric-0: #eef9fc;
+  --color-turmeric-1: #d2eff9;
+  --color-turmeric-2: #a3def5;
+  --color-turmeric-3: #71cbf4;
+  --color-turmeric-4: #3db8f5;
+  --color-turmeric-5: #079ff8;
+  --color-turmeric-6: #005d99;
+  --color-turmeric-7: #075588;
+  --color-turmeric-8: #0d4d77;
+  --color-turmeric-9: #124668;
+  --color-turmeric-10: #163e5a;
+
+  /* Purple */
+  --color-purple-0: #faf4fb;
+  --color-purple-1: #f3e5f5;
+  --color-purple-2: #e1bee7;
+  --color-purple-3: #ce93d8;
+  --color-purple-4: #ba68c8;
+  --color-purple-5: #ab47bc;
+  --color-purple-6: #9c27b0;
+  --color-purple-7: #8e24aa;
+  --color-purple-8: #7b1fa2;
+  --color-purple-9: #6a1b9a;
+  --color-purple-10: #4a148c;
+
+  /* Light Green */
+  --color-light-green-0: #f6fef9;
+  --color-light-green-1: #ecfdf3;
+  --color-light-green-2: #dbfae6;
+  --color-light-green-3: #a9efc5;
+  --color-light-green-4: #75e0a7;
+  --color-light-green-5: #47cd89;
+  --color-light-green-6: #17b26a;
+  --color-light-green-7: #079455;
+  --color-light-green-8: #067647;
+  --color-light-green-9: #085d3a;
+  --color-light-green-10: #074d31;
+
+  /* Grey Blue */
+  --color-grey-blue-0: #f9f9fb;
+  --color-grey-blue-1: #f6f7f9;
+  --color-grey-blue-2: #f2f4f7;
+  --color-grey-blue-3: #eaecf0;
+  --color-grey-blue-4: #d0d5dd;
+  --color-grey-blue-5: #98a2b3;
+  --color-grey-blue-6: #667085;
+  --color-grey-blue-7: #475467;
+  --color-grey-blue-8: #344054;
+  --color-grey-blue-9: #182230;
+  --color-grey-blue-10: #101828;
+
+  /* Neutral (gray scale) */
+  --color-gray-1: #ffffff;
+  --color-gray-2: #fafafa;
+  --color-gray-3: #f5f5f5;
+  --color-gray-4: #f0f0f0;
+  --color-gray-5: #d9d9d9;
+  --color-gray-6: #bfbfbf;
+  --color-gray-7: #8c8c8c;
+  --color-gray-8: #595959;
+  --color-gray-9: #434343;
+  --color-gray-10: #262626;
+  --color-gray-11: #1f1f1f;
+  --color-gray-12: #141414;
+  --color-gray-13: #000000;
+
+  /* 🏷 Semantic Color Tokens */
+  --color-primary: var(--color-turmeric-6);
+  --color-primary-hover: var(--color-turmeric-7);
+  --color-primary-active: var(--color-turmeric-8);
+  --color-primary-text: var(--color-turmeric-6);
+
+  --color-success: var(--color-light-green-6);
+  --color-success-hover: var(--color-light-green-7);
+  --color-success-active: var(--color-light-green-8);
+  --color-success-bg: var(--color-light-green-1);
+  --color-success-border: var(--color-light-green-3);
+
+  --color-warning: var(--color-orange-6);
+  --color-warning-hover: var(--color-orange-7);
+  --color-warning-active: var(--color-orange-8);
+  --color-warning-bg: var(--color-orange-1);
+  --color-warning-border: var(--color-orange-3);
+
+  --color-error: var(--color-red-6);
+  --color-error-hover: var(--color-red-7);
+  --color-error-active: var(--color-red-8);
+  --color-error-bg: var(--color-red-1);
+  --color-error-border: var(--color-red-3);
+
+  --color-info: var(--color-blue-6);
+  --color-info-hover: var(--color-blue-7);
+  --color-info-active: var(--color-blue-8);
+  --color-info-bg: var(--color-blue-1);
+  --color-info-border: var(--color-blue-3);
+
+  /* Text Colors */
+  --color-text-base: var(--color-grey-blue-10);
+  --color-text-secondary: var(--color-grey-blue-7);
+  --color-text-tertiary: var(--color-grey-blue-8);
+  --color-text-placeholder: var(--color-grey-blue-7);
+  --color-text-disabled: var(--color-grey-blue-5);
+  --color-text-heading: var(--color-grey-blue-10);
+
+  /* Backgrounds */
+  --color-bg-base: #ffffff;
+  --color-bg-container: var(--color-gray-2);
+  --color-bg-elevated: var(--color-gray-3);
+  --color-bg-layout: var(--color-gray-4);
+
+  /* Borders */
+  --color-border: var(--color-gray-5);
+  --color-border-secondary: var(--color-gray-4);
+
+  /* Icons */
+  --color-icon: var(--color-grey-blue-7);
+  --color-icon-hover: var(--color-grey-blue-8);
+
+  /* === 📏 SPACING TOKENS === */
+
+  --spacing-0: 0px;
+  --spacing-2: 2px;
+  --spacing-4: 4px;
+  --spacing-6: 6px;
+  --spacing-8: 8px;
+  --spacing-12: 12px;
+  --spacing-16: 16px;
+  --spacing-20: 20px;
+  --spacing-24: 24px;
+  --spacing-28: 28px;
+  --spacing-32: 32px;
+  --spacing-36: 36px;
+  --spacing-40: 40px;
+  --spacing-44: 44px;
+  --spacing-48: 48px;
+  --spacing-52: 52px;
+  --spacing-56: 56px;
+  --spacing-60: 60px;
+  --spacing-64: 64px;
+  --spacing-68: 68px;
+  --spacing-72: 72px;
+  --spacing-76: 76px;
+  --spacing-80: 80px;
+  --spacing-84: 84px;
+  --spacing-88: 88px;
+  --spacing-92: 92px;
+  --spacing-96: 96px;
+  --spacing-100: 100px;
+
+  /* === 🔵 RADIUS TOKENS === */
+  --radius-none: 0px;
+  --radius-2xs: 2px;
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+  --radius-3xl: 20px;
+  --radius-4xl: 24px;
+
+  --spacing-xs: 8px;
+  --spacing-sm: 12px;
+  --spacing-md: 20px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-content-horizontal: 16px;
+  --spacing-content-vertical: 12px;
+  --spacing-content-horizontalLG: 24px;
+  --spacing-content-verticalLG: 16px;
+
+  /* === 📝 FONT SIZE TOKENS (16px base = 1rem) === */
+  --font-size-xs: 0.5rem; /* 8px */
+  --font-size-2xs: 0.5625rem; /* 9px */
+  --font-size-sm: 0.625rem; /* 10px */
+  --font-size-base: 0.6875rem; /* 11px */
+  --font-size-md: 0.75rem; /* 12px */
+  --font-size-lg: 0.8125rem; /* 13px */
+  --font-size-xl: 0.875rem; /* 14px */
+  --font-size-2xl: 1rem; /* 16px */
+  --font-size-3xl: 1.125rem; /* 18px */
+  --font-size-4xl: 1.25rem; /* 20px */
+  --font-size-5xl: 2.1875rem; /* 35px */
+
+  --breakpoint-desktop: 1440px;
+  --breakpoint-tablet: 1024px;
+  --breakpoint-mobile: 768px;
+  --breakpoint-mobile-sm: 412px;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+  overflow: hidden;
+}
+
+/* Edge-to-edge table styling */
+.edge-to-edge-table {
+  border-radius: inherit !important;
+  height: inherit !important;
+}
+
+.edge-to-edge-table .ant-table {
+  border-radius: inherit !important;
+  border: none !important;
+  height: inherit !important;
+}
+
+.edge-to-edge-table .ant-spin-nested-loading {
+  height: inherit !important;
+}
+
+.edge-to-edge-table .ant-spin-container {
+  height: inherit !important;
+}
+
+.edge-to-edge-table .ant-table-container {
+  border-radius: inherit !important;
+  border: none !important;
+  height: 100% !important;
+}
+
+.empty-table .ant-table-container {
+  height: 100% !important;
+}
+
+.empty-table .ant-table-body {
+  height: 100% !important;
+}
+
+.edge-to-edge-table table {
+  height: 100% !important;
+}
+
+.edge-to-edge-table .ant-spin {
+  max-height: 100% !important;
+}
+
+.edge-to-edge-table .ant-table-content {
+  border-radius: inherit !important;
+  height: inherit !important;
+}
+
+.edge-to-edge-table {
+  border-radius: 0px !important;
+  border: 1px solid #eceff3 !important;
+  background: #ffffff !important;
+  border-bottom-left-radius: 0px !important;
+  border-bottom-right-radius: 0px !important;
+  border-top: none !important;
+}
+
+/* Dark mode table styling */
+.dark .edge-to-edge-table {
+  border-color: #3f3f3f !important;
+  background: #1a1a1a !important;
+}
+
+.edge-to-edge-table .ant-table-thead > tr > th {
+  border-top: none !important;
+  background-color: rgba(227, 242, 253, 1) !important;
+  border-bottom: 1px solid #d0e3ff !important;
+  color: #000 !important;
+  white-space: normal !important;
+  word-break: break-word;
+}
+
+/* Dark mode table header */
+.dark .edge-to-edge-table .ant-table-thead > tr > th {
+  background-color: #262626 !important;
+  border-bottom-color: #3f3f3f !important;
+  color: #f0f0f0 !important;
+}
+
+.edge-to-edge-table .ant-table-tbody > tr > td {
+  border-bottom: 1px solid #e5e7eb !important;
+  white-space: normal !important;
+  word-break: break-word;
+}
+
+/* Dark mode table cells */
+.dark .edge-to-edge-table .ant-table-tbody > tr > td {
+  border-bottom-color: #3f3f3f !important;
+}
+
+.edge-to-edge-table .ant-table-tbody > tr:hover > td {
+  background-color: #f5f7fa !important;
+  transition: background-color 0.4s ease-in-out;
+}
+
+/* Dark mode table row hover */
+.dark .edge-to-edge-table .ant-table-tbody > tr:hover > td {
+  background-color: #2d2d2d !important;
+}
+
+.edge-to-edge-table .ant-table-thead > tr:first-child > th:first-child {
+  border-top-left-radius: inherit !important;
+}
+
+.edge-to-edge-table .ant-table-thead > tr:first-child > th:last-child {
+  border-top-right-radius: inherit !important;
+}
+
+.edge-to-edge-table .ant-table-tbody > tr:last-child > td:first-child {
+  border-bottom-left-radius: inherit !important;
+}
+
+.edge-to-edge-table .ant-table-tbody > tr:last-child > td:last-child {
+  border-bottom-right-radius: inherit !important;
+}
+
+/* Compact map popup styling */
+.leaflet-popup-content-wrapper {
+  padding: 8px !important;
+}
+
+.leaflet-popup-content {
+  margin: 0 !important;
+  line-height: 1.4 !important;
+}
+
+.leaflet-popup {
+  margin-bottom: 20px !important;
+}
+
+.custom-scroller {
+  will-change: transform;
+
+  /* 🚀 CRITICAL: Hardware acceleration */
+  transform: translateZ(0);
+
+  /* 🚀 CRITICAL: Disable smooth scrolling (conflicts with virtualizer) */
+  scroll-behavior: auto !important;
+
+  /* 🚀 CRITICAL: Optimize rendering */
+  /* contain: strict; */
+}
+/* Custom scrollbar */
+.custom-scroller::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+
+.custom-scroller::-webkit-scrollbar-thumb {
+  background: #bfbfbf !important;
+  border-radius: 4px !important;
+}
+
+.custom-scroller::-webkit-scrollbar-thumb:hover {
+  background: #8c8c8c !important;
+}
+
+.custom-scroller::-webkit-scrollbar-track {
+  background: #f5f5f5 !important;
+}
+
+/* Dark mode scrollbar */
+.dark .custom-scroller::-webkit-scrollbar-thumb {
+  background: #4a4a4a !important;
+}
+
+.dark .custom-scroller::-webkit-scrollbar-thumb:hover {
+  background: #666666 !important;
+}
+
+.dark .custom-scroller::-webkit-scrollbar-track {
+  background: #1a1a1a !important;
+}
+
+.custom-scroller .ant-table-body {
+  scrollbar-width: thin;
+  scrollbar-color: #bfbfbf #f5f5f5;
+}
+
+.dark .custom-scroller .ant-table-body {
+  scrollbar-color: #4a4a4a #1a1a1a;
+}
+
+.custom-scroller .ant-table-body::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+
+.custom-scroller .ant-table-body::-webkit-scrollbar-thumb {
+  background: #bfbfbf;
+  border-radius: 4px;
+}
+
+.custom-scroller .ant-table-body::-webkit-scrollbar-track {
+  background: #f5f5f5;
+}
+
+.ant-pagination-item-active a {
+  color: white !important;
+}
+
+.ant-pagination-item-active {
+  color: white !important;
+}
+
+/* Color-only scrollbar for dark mode */
+.dark-scrollbar-colors {
+  /* No size changes here */
+}
+
+.dark .dark-scrollbar-colors::-webkit-scrollbar-thumb {
+  background: #4a4a4a !important;
+}
+
+.dark .dark-scrollbar-colors::-webkit-scrollbar-thumb:hover {
+  background: #666666 !important;
+}
+
+.dark .dark-scrollbar-colors::-webkit-scrollbar-track {
+  background: #1a1a1a !important;
+}
+
+.dark .dark-scrollbar-colors {
+  scrollbar-color: #4a4a4a #1a1a1a;
+}
+
+/* NProgress bar */
+#nprogress .bar {
+  background: var(--color-primary) !important;
+  height: 3px !important;
+}
+
+#nprogress .peg {
+  box-shadow:
+    0 0 10px var(--color-primary),
+    0 0 5px var(--color-primary) !important;
+}
+
+.remove-card-padding > .ant-card-body {
+  padding: 0 !important;
+}
+
+.pump-tabs-group .ant-tabs-nav-list {
+  gap: 2px !important;
+}
+
+.pump-tabs-group .ant-tabs-tab {
+  margin: 0 !important;
+  padding: 4px 10px !important;
+}
+
+.custom-pump-tabs .ant-tabs-nav-list {
+  gap: 2px !important;
+}
+
+.custom-pump-tabs .ant-tabs-tab {
+  margin: 0 !important;
+  padding: 4px 10px !important;
+}
+
+.card.ant-card.small .ant-card-body {
+  padding: 0.5rem !important;
+}
+
+.card.ant-card {
+  height: 100% !important;
+}
+
+.card.ant-card .ant-card-body {
+  padding: 1rem !important;
+  height: 100% !important;
+}
+
+.auto-height-card.ant-card {
+  height: auto !important;
+}
+
+.auto-height-card.ant-card .ant-card-body {
+  height: auto !important;
+}
+
+.leaflet-tooltip.plant-tooltip {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #f0f0f0;
+  padding: 8px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+}
+
+/* Dark mode leaflet tooltip */
+.dark .leaflet-tooltip.plant-tooltip {
+  background: #262626;
+  border-color: #3f3f3f;
+  color: #f0f0f0;
+}
+
+/* Refresh submenu - position to the left */
+.refresh-submenu-left {
+  transform: translateX(-100%) !important;
+  margin-left: -8px !important;
+}
+
+.refresh-submenu-left .ant-dropdown-menu {
+  margin-left: 0 !important;
+}
+
+/* Make refresh menu item fully clickable */
+.ant-dropdown-menu-item[data-menu-id*="refresh"] {
+  cursor: pointer;
+}
+
+.ant-dropdown-menu-item[data-menu-id*="refresh"]
+  > .ant-dropdown-menu-title-content {
+  width: 100%;
+  pointer-events: auto;
+}

@@ -1,0 +1,16 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Run Next.js build
+echo "Running Next.js build before push..."
+npm run build
+
+# Capture exit code
+BUILD_EXIT_CODE=$?
+
+if [ $BUILD_EXIT_CODE -ne 0 ]; then
+  echo "🚫 Build failed! Push aborted."
+  exit 1
+else
+  echo "✅ Build succeeded! Proceeding with push..."
+fi

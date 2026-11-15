@@ -1,0 +1,21 @@
+/* Filters Drawer Styles */
+
+.drawerContent {
+  width: 100%;
+}
+
+.filterSection {
+  display: block;
+}
+
+.filterLabel {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.divider {
+  margin: 0;
+}
+

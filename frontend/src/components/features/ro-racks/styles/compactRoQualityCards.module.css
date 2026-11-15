@@ -1,0 +1,144 @@
+/* Compact RO Quality Cards Component Styles */
+
+.container {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  height: 100%;
+  flex-wrap: nowrap;
+  min-width: 0;
+}
+
+.containerUAQ {
+  flex-wrap: wrap;
+}
+
+.card {
+  flex: 1;
+  height: 45px;
+  border-radius: 8px;
+  padding: 6px 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+}
+
+.cardUAQ {
+  flex: 0 1 calc(33.333% - 8px);
+}
+
+.cardContent {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+}
+
+.title {
+  font-size: 14px;
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+.value {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.unit {
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+/* Loading skeleton */
+.loadingCard {
+  flex: 1;
+  height: 45px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8eef5 100%);
+  border-radius: 8px;
+  padding: 6px 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+}
+
+.loadingCardUAQ {
+  flex: 0 1 calc(33.333% - 8px);
+}
+
+.loadingBar {
+  border-radius: 4px;
+  animation: pulse 2s infinite;
+}
+
+.loadingBarTitle {
+  width: 40%;
+  height: 16px;
+  background: #e2e8f0;
+}
+
+.loadingBarValue {
+  width: 20%;
+  height: 14px;
+  background: #e2e8f0;
+}
+
+/* Error state */
+.errorContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 60px;
+  color: #ef4444;
+}
+
+.errorContainerSingle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 60px;
+  color: #6b7280;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+/* Single card loading state */
+.singleCardLoading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 60px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8eef5 100%);
+  border-radius: 8px;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Responsive: Reduce spacing at 900px and below */
+@media (max-height: 900px) {
+  .container {
+    gap: 4px;
+  }
+
+  .card {
+    height: 40px;
+    padding: 4px 8px;
+  }
+
+  .cardUAQ {
+    flex: 0 1 calc(33.333% - 4px);
+  }
+}

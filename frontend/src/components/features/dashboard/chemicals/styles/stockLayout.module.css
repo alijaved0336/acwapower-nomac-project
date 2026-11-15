@@ -1,0 +1,125 @@
+/* Stock Layout Styles */
+
+/* Main container */
+.mainContainer {
+  height: 100vh;
+  overflow: hidden;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8eef5 100%);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+:global(.dark) .mainContainer {
+  background: #141414;
+}
+
+/* Content container */
+.contentContainer {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 20px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Cards container */
+.cardsWrapper {
+  width: 100%;
+}
+
+/* Stock card with colored borders */
+.stockCard {
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+/* Different colored borders for cards (cycling through colors) */
+.stockCard:nth-child(6n + 1),
+.stockCard:nth-child(6n + 2),
+.stockCard:nth-child(6n + 3),
+.stockCard:nth-child(6n + 4),
+.stockCard:nth-child(6n + 5),
+.stockCard:nth-child(6n + 6) {
+  border: 1px solid #d9d9d9; /* Default AntD border color approximation or use variable if available in CSS */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  background: #ffffff;
+}
+
+/* Dark mode card styles - keep same border colors, update backgrounds and shadows */
+:global(.dark) .stockCard:nth-child(6n + 1),
+:global(.dark) .stockCard:nth-child(6n + 2),
+:global(.dark) .stockCard:nth-child(6n + 3),
+:global(.dark) .stockCard:nth-child(6n + 4),
+:global(.dark) .stockCard:nth-child(6n + 5),
+:global(.dark) .stockCard:nth-child(6n + 6) {
+  background: #1a1a1a;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  border-color: #424242;
+}
+
+.stockCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+/* Filter button */
+.filterButton {
+  position: fixed !important;
+  bottom: 24px !important;
+  right: 50px !important;
+  z-index: 1000 !important;
+  width: 56px !important;
+  height: 56px !important;
+  min-width: 56px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow:
+    0 8px 24px rgba(24, 144, 255, 0.3),
+    0 4px 12px rgba(0, 0, 0, 0.1) !important;
+  background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%) !important;
+  border: none !important;
+  font-size: var(--font-size-4xl) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  cursor: pointer !important;
+  padding: 0 !important;
+}
+
+.filterButton:hover {
+  transform: scale(1.1) !important;
+  box-shadow:
+    0 12px 32px rgba(24, 144, 255, 0.4),
+    0 6px 16px rgba(0, 0, 0, 0.15) !important;
+}
+
+.filterButton:focus {
+  transform: scale(1.1) !important;
+  box-shadow:
+    0 12px 32px rgba(24, 144, 255, 0.4),
+    0 6px 16px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Responsive adjustments */
+@media (max-height: 900px) {
+  .contentContainer {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .contentContainer {
+    padding: 12px;
+  }
+
+  .filterButton {
+    bottom: 16px !important;
+    right: 16px !important;
+    width: 48px !important;
+    height: 48px !important;
+    min-width: 48px !important;
+  }
+}

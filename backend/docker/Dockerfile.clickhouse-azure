@@ -1,0 +1,60 @@
+# ClickHouse with Azure Blob Storage Configuration
+FROM clickhouse/clickhouse-server:22.8
+
+# Install required packages for Azure integration
+USER root
+RUN apt-get update && apt-get install -y \
+    curl \
+    wget \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create necessary directories
+RUN mkdir -p /etc/clickhouse-server/config.d/ \
+    && mkdir -p /var/log/clickhouse-server/ \
+    && mkdir -p /var/lib/clickhouse/
+
+# Copy Azure configuration
+COPY config/clickhouse_config_with_azure.xml /etc/clickhouse-server/config.xml
+
+# Set proper permissions
+RUN chown -R clickhouse:clickhouse /etc/clickhouse-server/ \
+    && chown -R clickhouse:clickhouse /var/lib/clickhouse/ \
+    && chown -R clickhouse:clickhouse /var/log/clickhouse-server/
+
+# Create entrypoint script for Azure setup
+RUN cat > /docker-entrypoint-azure.sh << 'EOF'
+#!/bin/bash
+set -e
+
+# Validate required environment variables
+if [ -z "$AZURE_STORAGE_KEY" ]; then
+    echo "ERROR: AZURE_STORAGE_KEY environment variable is required"
+    exit 1
+fi
+
+if [ -z "$CLICKHOUSE_PASSWORD" ]; then
+    echo "ERROR: CLICKHOUSE_PASSWORD environment variable is required"
+    exit 1
+fi
+
+echo "Starting ClickHouse with Azure Blob Storage configuration..."
+echo "Storage Account: mpcswrosg"
+echo "Container: swro"
+echo "Config file: /etc/clickhouse-server/config.xml"
+
+# Start ClickHouse server
+exec /entrypoint.sh "$@"
+EOF
+
+RUN chmod +x /docker-entrypoint-azure.sh
+
+# Switch back to clickhouse user
+USER clickhouse
+
+# Expose ports
+EXPOSE 8123 9000
+
+# Use custom entrypoint
+ENTRYPOINT ["/docker-entrypoint-azure.sh"]
+CMD ["clickhouse-server"]

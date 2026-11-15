@@ -1,0 +1,118 @@
+<?xml version="1.0"?>
+<clickhouse>
+    <!-- Storage Configuration for Azure Blob Storage -->
+    <storage_configuration>
+        <disks>
+            <!-- Local disk for temporary operations and metadata -->
+            <default>
+                <type>local</type>
+                <path>/var/lib/clickhouse/</path>
+                <keep_free_space_bytes>1073741824</keep_free_space_bytes> <!-- 1GB -->
+            </default>
+            
+            <!-- Azure Blob Storage for persistent data -->
+            <azure_blob_storage>
+                <type>azure_blob_storage</type>
+                <storage_account_url>https://mpcswrosg.blob.core.windows.net</storage_account_url>
+                <container_name>swro</container_name>
+                <account_name>mpcswrosg</account_name>
+                <account_key from_env="AZURE_STORAGE_KEY"></account_key>
+                <max_single_read_retries>3</max_single_read_retries>
+                <max_single_download_retries>3</max_single_download_retries>
+                <retry_initial_backoff_ms>100</retry_initial_backoff_ms>
+                <retry_max_backoff_ms>3200</retry_max_backoff_ms>
+                <max_single_part_upload_size>104857600</max_single_part_upload_size> <!-- 100MB -->
+                <max_upload_part_size>104857600</max_upload_part_size> <!-- 100MB -->
+            </azure_blob_storage>
+        </disks>
+        
+        <policies>
+            <!-- Hybrid policy: metadata on local, data on Azure -->
+            <azure_hybrid>
+                <volumes>
+                    <local_metadata>
+                        <disk>default</disk>
+                        <max_data_part_size_bytes>10485760</max_data_part_size_bytes> <!-- 10MB -->
+                    </local_metadata>
+                    <azure_data>
+                        <disk>azure_blob_storage</disk>
+                    </azure_data>
+                </volumes>
+                <move_factor>0.1</move_factor>
+                <prefer_not_to_merge>true</prefer_not_to_merge>
+            </azure_hybrid>
+            
+            <!-- Pure Azure policy for full persistence -->
+            <azure_only>
+                <volumes>
+                    <azure_volume>
+                        <disk>azure_blob_storage</disk>
+                    </azure_volume>
+                </volumes>
+            </azure_only>
+        </policies>
+    </storage_configuration>
+    
+    <!-- Default storage policy -->
+    <default_storage_policy>azure_hybrid</default_storage_policy>
+    
+    <!-- MergeTree settings for better Azure performance -->
+    <merge_tree>
+        <max_suspicious_broken_parts>100</max_suspicious_broken_parts>
+        <parts_to_delay_insert>1000</parts_to_delay_insert>
+        <parts_to_throw_insert>3000</parts_to_throw_insert>
+        <max_parts_in_total>10000</max_parts_in_total>
+        <max_compress_block_size>1048576</max_compress_block_size> <!-- 1MB -->
+        <min_compress_block_size>65536</min_compress_block_size> <!-- 64KB -->
+    </merge_tree>
+    
+    <!-- Logging configuration -->
+    <logger>
+        <level>information</level>
+        <log>/var/log/clickhouse-server/clickhouse-server.log</log>
+        <errorlog>/var/log/clickhouse-server/clickhouse-server.err.log</errorlog>
+        <size>1000M</size>
+        <count>3</count>
+    </logger>
+    
+    <!-- Network settings -->
+    <listen_host>0.0.0.0</listen_host>
+    <http_port>8123</http_port>
+    <tcp_port>9000</tcp_port>
+    
+    <!-- User settings -->
+    <users>
+        <default>
+            <password from_env="CLICKHOUSE_PASSWORD"></password>
+            <networks>
+                <ip>::/0</ip>
+            </networks>
+            <profile>default</profile>
+            <quota>default</quota>
+        </default>
+    </users>
+    
+    <!-- Profiles -->
+    <profiles>
+        <default>
+            <max_memory_usage>10000000000</max_memory_usage> <!-- 10GB -->
+            <use_uncompressed_cache>0</use_uncompressed_cache>
+            <load_balancing>random</load_balancing>
+            <max_execution_time>300</max_execution_time> <!-- 5 minutes -->
+        </default>
+    </profiles>
+    
+    <!-- Quotas -->
+    <quotas>
+        <default>
+            <interval>
+                <duration>3600</duration>
+                <queries>0</queries>
+                <errors>0</errors>
+                <result_rows>0</result_rows>
+                <read_rows>0</read_rows>
+                <execution_time>0</execution_time>
+            </interval>
+        </default>
+    </quotas>
+</clickhouse>
